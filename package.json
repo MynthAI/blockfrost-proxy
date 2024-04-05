@@ -1,0 +1,47 @@
+{
+  "name": "blockfrost-proxy",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "npx tsc",
+    "start": "npx tsx src/index.ts",
+    "docker:build": "docker build -t blockfrost-proxy .",
+    "docker:run": "docker run -ti --add-host host.docker.internal:host-gateway -e VAULT_CLI_TOKEN=\"$VAULT_CLI_TOKEN\" -e VAULT_CLI_URL=http://host.docker.internal:8200 -p 3000:3000 blockfrost-proxy",
+    "prettier": "npx prettier -w '**/*.{js,jsx,ts,tsx,json,yml.j2,yml,yaml,.*}'",
+    "lint": "concurrently \"npx prettier --check '**/*.{js,jsx,ts,tsx,json,yml.j2,yml,yaml,.*}'\" \"npx eslint . --max-warnings=0\""
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.1",
+    "@types/config": "^3.3.3",
+    "axios": "^1.6.8",
+    "config": "^3.3.11",
+    "fastify": "^4.26.2",
+    "http-proxy": "^1.18.1",
+    "mynth-helper": "^1.3.13",
+    "mynth-logger": "^1.1.3",
+    "pino": "^8.19.0"
+  },
+  "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
+    "@types/node": "^20.11.29",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-node": "^0.3.9",
+    "eslint-plugin-import": "^2.29.1",
+    "pino-pretty": "^11.0.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.2"
+  },
+  "prettier": {
+    "overrides": [
+      {
+        "files": "*.yml.j2",
+        "options": {
+          "parser": "yaml"
+        }
+      }
+    ]
+  }
+}

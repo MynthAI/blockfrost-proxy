@@ -1,0 +1,68 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Login to Quay.io
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_ID }}
+          password: ${{ secrets.QUAY_PW }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.18
+          check-latest: true
+
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Build blockfrost-proxy container
+        run: docker build -t blockfrost-proxy .
+
+      - name: Install dependencies
+        run: npm install -g mynth-helper
+
+      - name: Set up Vault
+        run: npx run-vault blockfrost-proxy
+        env:
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+
+      - name: Run Docker container
+        run: |
+          export VAULT_CLI_TOKEN="$(docker exec vault token)"
+          docker run --rm -d \
+            --name blockfrost-proxy \
+            --add-host host.docker.internal:host-gateway \
+            -e VAULT_CLI_TOKEN="$VAULT_CLI_TOKEN" \
+            -e VAULT_CLI_URL=http://host.docker.internal:8200/ \
+            -p 3000:3000 \
+            blockfrost-proxy
+
+      - name: Test proxy works
+        run: bin/test.sh
+
+      - name: Stop Docker container
+        run: docker stop blockfrost-proxy
+
+      - name: Publish container
+        run: |
+          TAG=$(git rev-parse --short HEAD)
+          docker tag blockfrost-proxy quay.io/mynth/blockfrost-proxy:$TAG
+          docker tag blockfrost-proxy quay.io/mynth/blockfrost-proxy:latest
+          docker push quay.io/mynth/blockfrost-proxy:$TAG
+          docker push quay.io/mynth/blockfrost-proxy:latest
+        if: github.ref == 'refs/heads/main'

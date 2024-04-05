@@ -1,0 +1,8 @@
+server:
+  host: 127.0.0.1
+  port: 3000
+blockfrost:
+  mainnet:
+    url: https://cardano-mainnet.blockfrost.io/api/v0/
+  preprod:
+    url: https://cardano-preprod.blockfrost.io/api/v0/
