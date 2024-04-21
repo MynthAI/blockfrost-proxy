@@ -2,16 +2,16 @@ import axios from "axios";
 import config from "config";
 import { FastifyInstance } from "fastify";
 
+type Network = "mainnet" | "preprod" | "preview" | "sanchonet";
+
 const proxyRoute = async (server: FastifyInstance) => {
-  server.get<{ Params: { network: "mainnet" | "preprod"; postfix: string } }>(
+  server.get<{ Params: { network: Network; postfix: string } }>(
     "/api/blockfrost/:network/*",
     async (request, reply) => {
       const { network } = request.params;
-
-      const baseUrl =
-        network.toLowerCase() === "mainnet"
-          ? config.get<string>("blockfrost.mainnet.url")
-          : config.get<string>("blockfrost.preprod.url");
+      const baseUrl = config.get<string>(
+        `blockfrost.${network.toLowerCase()}.url`,
+      );
       const headers = {
         headers: {
           project_id: config.get<string>("blockfrost.project_id"),
