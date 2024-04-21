@@ -6,3 +6,7 @@ blockfrost:
     url: https://cardano-mainnet.blockfrost.io/api/v0/
   preprod:
     url: https://cardano-preprod.blockfrost.io/api/v0/
+  preview:
+    url: https://cardano-preview.blockfrost.io/api/v0/
+  sanchonet:
+    url: https://cardano-sanchonet.blockfrost.io/api/v0/
