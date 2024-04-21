@@ -26,7 +26,8 @@ const proxyRoute = async (server: FastifyInstance) => {
       const baseUrl = config.get<string>(configName);
 
       try {
-        const url = `${baseUrl}${request.url.substring(`/api/blockfrost/${network}`.length)}`;
+        const path = sanitize(request.url);
+        const url = `${baseUrl}${path.substring(`/api/blockfrost/${network}`.length)}`;
         console.debug("URL:", url);
         const response = await axios.get(url, {
           headers: {
@@ -41,5 +42,7 @@ const proxyRoute = async (server: FastifyInstance) => {
     },
   );
 };
+
+const sanitize = (path: string) => path.replace(/[^a-zA-Z0-9/_.-]/g, "");
 
 export default proxyRoute;
