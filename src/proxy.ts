@@ -43,6 +43,6 @@ const proxyRoute = async (server: FastifyInstance) => {
   );
 };
 
-const sanitize = (path: string) => path.replace(/[^a-zA-Z0-9/_.-]/g, "");
+const sanitize = (path: string) => path.replace(/[^a-zA-Z0-9/_.?=&-]/g, "");
 
 export default proxyRoute;
