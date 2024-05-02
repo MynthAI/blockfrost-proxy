@@ -18,7 +18,7 @@
     "fastify": "^4.26.2",
     "http-proxy": "^1.18.1",
     "mynth-helper": "^1.3.13",
-    "mynth-logger": "^1.1.3",
+    "mynth-logger": "^1.1.4",
     "pino": "^8.19.0"
   },
   "devDependencies": {
