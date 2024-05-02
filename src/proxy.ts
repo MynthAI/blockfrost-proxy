@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import config from "config";
 import { FastifyInstance } from "fastify";
 
@@ -36,8 +36,13 @@ const proxyRoute = async (server: FastifyInstance) => {
         });
         reply.code(response.status).send(response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
-        reply.code(500).send({ error: "Internal Server Error" });
+        if (isAxiosError(error)) {
+          const status = error.response?.status || 404;
+          reply.code(status).send({ error: "Not found" });
+        } else {
+          console.error("Error fetching data:", error);
+          reply.code(500).send({ error: "Internal Server Error" });
+        }
       }
     },
   );
