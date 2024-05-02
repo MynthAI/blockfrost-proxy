@@ -11,7 +11,7 @@ const start = async () => {
   const port = config.get<number>("server.port");
 
   const server = Fastify({
-    logger: await setupLogging(),
+    logger: setupLogging(),
     disableRequestLogging: true,
   });
 
